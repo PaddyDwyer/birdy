@@ -49,11 +49,32 @@ Game.prototype = {
 
     // The player and its settings
     this.player = new Player(this.game, 32, this.game.world.height - 150);
+
+    this.stars = this.game.add.group();
+ 
+    this.stars.enableBody = true;
+ 
+    //  Here we'll create 12 of them evenly spaced apart
+    for (var i = 0; i < 12; i++)
+    {
+        //  Create a star inside of the 'stars' group
+        var star = this.stars.create(i * 70, 0, 'star');
+ 
+        //  Let gravity do its thing
+        star.body.gravity.y = 6;
+ 
+        //  This just gives each star a slightly random bounce value
+        star.body.bounce.y = 0.7 + Math.random() * 0.2;
+    }
   },
 
   update: function () {
     //  Collide the player and the stars with the platforms
     this.game.physics.arcade.collide(this.player, this.platforms);
+
+    this.game.physics.arcade.collide(this.stars, this.platforms);
+
+    this.game.physics.arcade.overlap(this.player, this.stars, this.collectStar, null, this);
     // var x, y, cx, cy, dx, dy, angle, scale;
 
     // x = this.input.position.x;
@@ -73,7 +94,8 @@ Game.prototype = {
 
   },
 
-  onInputDown: function () {
+  collectStar: function (player, star) {
+    star.kill();
     // this.game.state.start('Menu');
   }
 };
