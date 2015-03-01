@@ -11,8 +11,8 @@ var Player = function (game, x, y) {
     game.physics.arcade.enable(this);
  
     //  Player physics properties. Give the little guy a slight bounce.
-    this.body.bounce.y = 0.2;
-    this.body.gravity.y = 300;
+    this.body.bounce.y = 0.1;
+    this.body.gravity.y = 600;
     this.body.collideWorldBounds = true;
  
     //  Our two animations, walking left and right.
@@ -29,36 +29,76 @@ Player.prototype.constructor = Player;
  * Automatically called by World.update
  */
 Player.prototype.update = function() {
-    //  Reset the players velocity (movement)    
+  // Easy controls
+  //
+  // While the player is on the ground 
+  //  left right walk left right, stopping stops automatically
+  //  up jumps up, momentum carries the player
+  if (this.body.touching.down) {
     this.body.velocity.x = 0;
- 
-    if (cursors.left.isDown)
-    {
-        //  Move to the left
-        this.body.velocity.x = -150;
- 
-        this.animations.play('left');
+    if (cursors.left.isDown) {
+      // Move to the left
+      this.body.velocity.x = -150;
+
+      this.animations.play('left');
+    } else if (cursors.right.isDown) {
+      // Move to the right
+      this.body.velocity.x = 150;
+
+      this.animations.play('right');
+    } else {
+      // Stand Still
+      this.animations.stop();
+
+      this.frame = 4;
     }
-    else if (cursors.right.isDown)
-    {
-        //  Move to the right
-        this.body.velocity.x = 150;
+  }
+  //  Allow the player to jump if they are touching the ground.
+  if (cursors.up.isDown && this.body.touching.down)
+  {
+      this.body.velocity.y = -150;
+  }
+  // Wehn the player is in the air
+  //  use wasd, get the facing
+  //  -> facing thrust forward
+  //  <- facing thrust backward
+  //  w thrust up
+  //  d drop legs
+    // //  Reset the players velocity (movement)    
+    // if (this.body.touching.down) {
+    //   this.body.drag.x = 300;
+    //   //this.body.velocity.x = 0;
  
-        this.animations.play('right');
-    }
-    else
-    {
-        //  Stand still
-        this.animations.stop();
- 
-        this.frame = 4;
-    }
-    
-    //  Allow the player to jump if they are touching the ground.
-    if (cursors.up.isDown && this.body.touching.down)
-    {
-        this.body.velocity.y = -350;
-    }
+    //   if (cursors.left.isDown)
+    //   {
+    //       //  Move to the left
+    //       this.body.velocity.x = -150;
+   
+    //       this.animations.play('left');
+    //   }
+    //   else if (cursors.right.isDown)
+    //   {
+    //       //  Move to the right
+    //       this.body.velocity.x = 150;
+   
+    //       this.animations.play('right');
+    //   }
+    //   else
+    //   {
+    //       //  Stand still
+    //       this.animations.stop();
+   
+    //       this.frame = 4;
+    //   }
+    // } else {
+    //     this.body.drag.x = 0;
+    // }
+    // 
+    // //  Allow the player to jump if they are touching the ground.
+    // if (cursors.up.isDown && this.body.touching.down)
+    // {
+    //     this.body.velocity.y = -150;
+    // }
 };
 
 module.exports = Player;
